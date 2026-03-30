@@ -3,3 +3,7 @@ Better Days is a mental wellbeing and self-reflection platform that helps users 
 
 ## Packages
 pip install fastapi uvicorn sqlalchemy python-dotenv passlib[bcrypt] email-validator
+
+## Running venv
+python -m venv .venv
+.\.venv\Scripts\activate.ps1
