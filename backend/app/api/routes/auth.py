@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.schemas.user import UserCreate, UserResponse
+from app.schemas.auth import LoginRequest, LoginResponse
 from app.services.user_service import get_user_by_email, create_user
+from app.services.auth_service import authenticate_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -25,3 +27,19 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
     )
 
     return user
+
+@router.post("/login", response_model=LoginResponse)
+def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
+    user = authenticate_user(
+        db=db,
+        email=login_data.email,
+        password=login_data.password
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password"
+        )
+    
+    return {"message": "Login successful"}
