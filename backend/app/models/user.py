@@ -14,4 +14,4 @@ class User(Base):
     anonymous_name = Column(String, unique=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    checkins = relationship("DailyCheckins", back_populates="user", cascade="all, delete-orphan")
+    checkins = relationship("DailyCheckin", back_populates="user", cascade="all, delete-orphan")
