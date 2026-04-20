@@ -25,5 +25,15 @@ class CheckinResponse(BaseModel):
     productivity: int
     small_win: str
 
+class CheckinUpdate(BaseModel):
+    date: date
+    mood: int = Field(ge=1, le=5)
+    stress: int = Field(ge=1, le=5)
+    energy: int = Field(ge=1, le=5)
+    sleep_hours: float = Field(ge=0, le=24)
+    exercise_done: bool
+    social_connection: int = Field(ge=1, le=5)
+    productivity: int = Field(ge=1, le=5)
+    small_win: str
 class Config:
     from_attributes = True

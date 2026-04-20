@@ -3,13 +3,28 @@ from sqlalchemy.orm import Session
 
 from app.models.daily_checkin import DailyCheckin
 
-def get_checkin_by_user_and_date(db: Session, user_id: int, checkin_date: date):
+
+def get_checkin_by_user_and_date(db: Session, user_id: int, checkin_date: date) -> DailyCheckin | None:
     return (
-        db.query(DailyCheckin).filter(
+        db.query(DailyCheckin)
+        .filter(
             DailyCheckin.user_id == user_id,
             DailyCheckin.date == checkin_date
-        ).first()
+        )
+        .first()
     )
+
+
+def get_checkin_by_id_for_user(db: Session, user_id: int, checkin_id: int) -> DailyCheckin | None:
+    return (
+        db.query(DailyCheckin)
+        .filter(
+            DailyCheckin.id == checkin_id,
+            DailyCheckin.user_id == user_id
+        )
+        .first()
+    )
+
 
 def create_checkin(db: Session, user_id: int, checkin_data) -> DailyCheckin:
     checkin = DailyCheckin(
@@ -22,7 +37,7 @@ def create_checkin(db: Session, user_id: int, checkin_data) -> DailyCheckin:
         exercise_done=checkin_data.exercise_done,
         social_connection=checkin_data.social_connection,
         productivity=checkin_data.productivity,
-        small_win=checkin_data.small_win
+        small_win=checkin_data.small_win,
     )
 
     db.add(checkin)
@@ -30,10 +45,27 @@ def create_checkin(db: Session, user_id: int, checkin_data) -> DailyCheckin:
     db.refresh(checkin)
     return checkin
 
-def get_user_checkins(db: Session, user_id: int):
+
+def get_user_checkins(db: Session, user_id: int) -> list[DailyCheckin]:
     return (
         db.query(DailyCheckin)
         .filter(DailyCheckin.user_id == user_id)
         .order_by(DailyCheckin.date.desc())
         .all()
     )
+
+
+def update_checkin(db: Session, checkin: DailyCheckin, checkin_data) -> DailyCheckin:
+    checkin.date = checkin_data.date
+    checkin.mood = checkin_data.mood
+    checkin.stress = checkin_data.stress
+    checkin.energy = checkin_data.energy
+    checkin.sleep_hours = checkin_data.sleep_hours
+    checkin.exercise_done = checkin_data.exercise_done
+    checkin.social_connection = checkin_data.social_connection
+    checkin.productivity = checkin_data.productivity
+    checkin.small_win = checkin_data.small_win
+
+    db.commit()
+    db.refresh(checkin)
+    return checkin
